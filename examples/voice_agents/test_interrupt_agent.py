@@ -23,7 +23,7 @@ class TestInterruptAgent(Agent):
         super().__init__(
             instructions="You are a helpful assistant. You tell long stories when asked.",
             # KEY CHANGE: This is what we are testing
-            interruption_ignore_list=["yeah", "ok", "uh-huh", "hmm"],
+            interruption_ignore_list=["yeah", "ok", "uh-huh", "hmm", "okay", "fine", "right"],
         )
 
     async def on_enter(self):
@@ -45,7 +45,7 @@ async def entrypoint(ctx: JobContext):
     ctx.log_context_fields = {"room": ctx.room.name}
     session = AgentSession(
         stt="deepgram/nova-3",
-        llm="openai/gpt-4.1-mini",
+        llm="openai/gpt-4o-mini",
         tts="cartesia/sonic-2:9626c31c-bec5-4cca-baa8-f8ba9e84c8bc",
         turn_detection=MultilingualModel(),
         vad=ctx.proc.userdata["vad"],
