@@ -20,7 +20,7 @@ Ensure your `.env` file has the valid API keys.
 
 ## 3. Running the Agent (The Simple Way)
 
-Instead of using the Cloud Playground (which was blocked/buffering), we use **Console Mode**. This runs everything locally on your machine.
+Instead of using the Livekit Playground (which was blocked/buffering), we use **Console Mode**. This runs everything locally on your machine.
 
 **Command:**
 ```powershell
