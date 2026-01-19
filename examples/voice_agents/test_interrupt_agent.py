@@ -1,3 +1,4 @@
+import os
 import logging
 from dotenv import load_dotenv
 from livekit.agents import (
@@ -20,13 +21,25 @@ load_dotenv()
 
 class TestInterruptAgent(Agent):
     def __init__(self) -> None:
+        ignore_words_env = os.getenv("INTERRUPTION_IGNORE_WORDS")
+        ignore_list = (
+            [word.strip() for word in ignore_words_env.split(",") if word.strip()]
+            if ignore_words_env
+            else ["yeah", "ok", "uh-huh", "hmm", "okay", "fine", "right", "yep", "yup","hm-hm","hm","hmmm"]
+        )
         super().__init__(
             instructions="You are a helpful assistant. You tell long stories when asked.",
             # KEY CHANGE: This is what we are testing
-            interruption_ignore_list=["yeah", "ok", "uh-huh", "hmm", "okay", "fine", "right"],
+            interruption_ignore_list=ignore_list,
         )
 
     async def on_enter(self):
+        print("DEBUG: Agent - on_enter triggered. Attempting to connect/say hello.")
+        try:
+            await self.say("Hello, I am your interruption testing agent. Ask me to tell you a story.")
+            print("DEBUG: Agent - Successfully sent hello message.")
+        except Exception as e:
+            print(f"DEBUG: Agent - Error in on_enter: {e}")
         self.session.generate_reply()
 
     @function_tool
@@ -40,7 +53,7 @@ def prewarm(proc: JobProcess):
 
 server.setup_fnc = prewarm
 
-@server.rtc_session()
+@server.rtc_session(agent_name="test-agent")
 async def entrypoint(ctx: JobContext):
     ctx.log_context_fields = {"room": ctx.room.name}
     session = AgentSession(
